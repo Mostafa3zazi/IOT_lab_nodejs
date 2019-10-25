@@ -5,19 +5,70 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-
+	<div>
+		<input type="button" id="device1on" value="Device 1 on"/>
+		<input type="button" id="device1off" value="Device 1 off"/>
+	</div>
+	<div>
+		<input type="button" id="device2on" value="Device 2 on"/>
+		<input type="button" id="device2off" value="Device 2 off"/>
+	</div>
+	<div>
+		<input type="button" id="device3on" value="Device 3 on"/>
+		<input type="button" id="device3off" value="Device 3 off"/>
+	</div>
+	<div>Sensor reading</div>
+	<div id="username_section">
+			<input type="text" id="username" placeholder="Enter your name" /> 
+			<input type="button" value="Send username" onclick="send_username()"/>
+	</div>
+	<div id="chat_section" style="display: none;">
+			<input type="text" id="text"/>
+			<input type="button" value="Send" id = "send" onclick="send_chat_message()"/>
+			<div id = "chatbox"></div>
+	</div>
 
 	<script>
 		
 		var HOST = location.origin.replace(/^http/, 'ws');
 		var ws = new WebSocket(HOST);
+		
 
 		ws.onmessage = function(msg){
-			console.log(msg.data);			
+			var json_data = JSON.parse(msg.data);
+			switch (json_data.type){
+				case "chat":
+					document.getElementById("chatbox").innerHTML += "<br>"+json_data.text;
+					break;
+			}
+			// console.log(msg);
+			// console.log(msg.data);	
 		}
 
 		ws.onopen = function(){
-			
+			var msg = {
+				type:"connection_type",
+				text:"client_connection",
+			};
+			ws.send(JSON.stringify(msg));
+		}
+		function send_username(){
+			var msg = {
+				type:"username",
+				text: document.getElementById("username").value,
+			};
+			ws.send(JSON.stringify(msg));
+			document.getElementById("username_section").innerHTML = "Welcome:  " + msg.text ;
+			document.getElementById("chat_section").style.display = "block";
+		}
+		function send_chat_message(){
+			var msg = {
+				type:"chat",
+				text: document.getElementById("text").value,
+			};
+			ws.send(JSON.stringify(msg));
+			document.getElementById("text").value="";
+
 		}
 
 	</script>
