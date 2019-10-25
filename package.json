@@ -1,0 +1,23 @@
+{
+  "name": "project-temp",
+  "version": "1.0.0",
+  "description": "IOT_chat_controller",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.1.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "10.x"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "iot"
+  ],
+  "author": "Azazi_we_shoraka2o",
+  "license": "ISC"
+}
