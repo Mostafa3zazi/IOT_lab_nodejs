@@ -10,17 +10,17 @@ const server = express()
 	.use('/',(req, res) =>{	res.sendFile(INDEX) })
 	.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
-const socketServer = new SocketServer({ server });
+const wss = new SocketServer({ server });
 var count = 0;
 
-socketServer.on('connection', (clientSocket) => {
+wss.on('connection', (ws) => {
 	console.log('Client connected');
 	count ++;
-	clientSocket.send("hello client" + count);
+	ws.send("hello client" + count);
 
-	clientSocket.on('message', function(msg) {
+	ws.on('message', function(msg) {
 		console.log(msg);
 	});
 	
-	clientSocket.on('close', () => console.log('Client disconnected'));
+	ws.on('close', () => console.log('Client disconnected'));
 });

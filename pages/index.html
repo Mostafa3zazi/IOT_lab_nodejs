@@ -9,11 +9,11 @@
 
 	<script>
 		
-		HOST = "ws://localhost:9000";
-		ws = new WebSocket(HOST);
+		var HOST = location.origin.replace(/^http/, 'ws');
+		var ws = new WebSocket(HOST);
 
 		ws.onmessage = function(msg){
-			
+			console.log(msg.data);			
 		}
 
 		ws.onopen = function(){
