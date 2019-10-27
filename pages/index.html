@@ -6,18 +6,18 @@
 </head>
 <body>
 	<div>
-		<input type="button" id="device1on" value="Device 1 on"/>
-		<input type="button" id="device1off" value="Device 1 off"/>
+		<input type="button" id="device1off" value="Device 1 on" onclick="send_command('device1on')"/>
+		<input type="button" id="device1off" value="Device 1 off" onclick="send_command('device1off')"/>
 	</div>
 	<div>
-		<input type="button" id="device2on" value="Device 2 on"/>
-		<input type="button" id="device2off" value="Device 2 off"/>
+		<input type="button" id="device2on" value="Device 2 on" onclick="send_command('device2on')"/> 
+		<input type="button" id="device2off" value="Device 2 off" onclick="send_command('device2off')"/>
 	</div>
 	<div>
-		<input type="button" id="device3on" value="Device 3 on"/>
-		<input type="button" id="device3off" value="Device 3 off"/>
+		<input type="button" id="device3on" value="Device 3 on" onclick="send_command('device3on')"/>
+		<input type="button" id="device3off" value="Device 3 off" onclick="send_command('device3off')"/>
 	</div>
-	<div>Sensor reading</div>
+	<div id="sensor">Sensor reading</div>
 	<div id="username_section">
 			<input type="text" id="username" placeholder="Enter your name" /> 
 			<input type="button" value="Send username" onclick="send_username()"/>
@@ -40,9 +40,10 @@
 				case "chat":
 					document.getElementById("chatbox").innerHTML += "<br>"+json_data.text;
 					break;
+				case "sensor":
+					document.getElementById("sensor").innerHTML = "Sensor reading: " + json_data.text;
+					break;
 			}
-			// console.log(msg);
-			// console.log(msg.data);	
 		}
 
 		ws.onopen = function(){
@@ -68,7 +69,13 @@
 			};
 			ws.send(JSON.stringify(msg));
 			document.getElementById("text").value="";
-
+		}
+		function send_command(command){
+			var msg = {
+				type:"command",
+				text:command,
+			};
+			ws.send(JSON.stringify(msg));
 		}
 
 	</script>

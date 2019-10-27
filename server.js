@@ -11,23 +11,21 @@ const server = express()
 	.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 const wss = new SocketServer({ server });
-var count = 0;
 
 wss.on('connection', (ws) => {
-	console.log('Client connected');
-	count ++;
-	//ws.send("hello client" + count);
-
 	ws.on('message', function(msg) {
 		var json_data = JSON.parse(msg);
 		console.log(json_data);
 		switch (json_data.type){
 			case "connection_type":
+				console.log(json_data.text);
 				ws.type = json_data.text;
 				break;
+
 			case "username":
 				ws.username = json_data.text;
 				break;
+
 			case "chat":
 				var chat_message = {
 					type:"chat",
@@ -39,6 +37,27 @@ wss.on('connection', (ws) => {
 					}
 				});
 				break;
+
+			case "command":
+				wss.clients.forEach(function(client){
+					if(client.type=="hw_connection"){
+						client.send(json_data.text);
+					}
+				});
+				break;
+
+			case "sensor":
+				var sensor_message = {
+					type:"sensor",
+					text:json_data.text,
+				};
+				wss.clients.forEach(function(client){
+					if(client.type=="client_connection"){
+						client.send(JSON.stringify(sensor_message));
+					}
+				});
+				break;
+
 		}
 
 		// console.log(data);
