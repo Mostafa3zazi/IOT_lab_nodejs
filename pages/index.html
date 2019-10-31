@@ -5,27 +5,56 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<div>
-		<input type="button" id="device1off" value="Device 1 on" onclick="send_command('device1on')"/>
-		<input type="button" id="device1off" value="Device 1 off" onclick="send_command('device1off')"/>
-	</div>
-	<div>
-		<input type="button" id="device2on" value="Device 2 on" onclick="send_command('device2on')"/> 
-		<input type="button" id="device2off" value="Device 2 off" onclick="send_command('device2off')"/>
-	</div>
-	<div>
-		<input type="button" id="device3on" value="Device 3 on" onclick="send_command('device3on')"/>
-		<input type="button" id="device3off" value="Device 3 off" onclick="send_command('device3off')"/>
-	</div>
-	<div id="sensor">Sensor reading</div>
-	<div id="username_section">
+	<fieldset class="sl">
+		<legend>
+			Hard ware
+		</legend>
+		<div id="devices">
+			<div class="device">
+				<fieldset>
+					<legend>Device 1</legend>
+					<input type="button" id="device1off" value="Turn on" onclick="send_command('device1on')"/>
+					<input type="button" id="device1off" value="Turn off" onclick="send_command('device1off')"/>
+				</fieldset>
+			</div>
+			<div class="device">
+				<fieldset>
+					<legend>Device 2</legend>
+					<input type="button" id="device2on" value="Turn on" onclick="send_command('device2on')"/> 
+					<input type="button" id="device2off" value="Turn off" onclick="send_command('device2off')"/>
+				</fieldset>
+			</div>
+			<div class="device">
+				<fieldset>
+					<legend>Device 3</legend>
+					<input type="button" id="device3on" value="Turn on" onclick="send_command('device3on')"/>
+					<input type="button" id="device3off" value="Turn off" onclick="send_command('device3off')"/>
+				</fieldset>
+			</div>
+			<div  class="sensor">
+				<fieldset>
+					<legend>Sensor</legend>
+					<div>Sensor Reading</div>
+					<div id="sensor">waiting for data</div>
+				</fieldset>
+			</div>
+		</div>
+	</fieldset>
+	</br>
+	<div id = "chat">
+		<div id="username_section">
 			<input type="text" id="username" placeholder="Enter your name" /> 
 			<input type="button" value="Send username" onclick="send_username()"/>
-	</div>
-	<div id="chat_section" style="display: none;">
-			<input type="text" id="text"/>
-			<input type="button" value="Send" id = "send" onclick="send_chat_message()"/>
-			<div id = "chatbox"></div>
+		</div>
+		<div id="chat_section" style="display: none;">
+			<div id="box">
+				<div id = "chatbox"></div>
+				<div id="chat_controllers">
+					<input type="text" id="text"/>
+					<input type="button" value="Send" id = "send" onclick="send_chat_message()"/>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<script>
@@ -36,9 +65,10 @@
 
 		ws.onmessage = function(msg){
 			var json_data = JSON.parse(msg.data);
+			console.log(json_data);
 			switch (json_data.type){
 				case "chat":
-					document.getElementById("chatbox").innerHTML += "<br>"+json_data.text;
+					add_message(json_data);
 					break;
 				case "sensor":
 					document.getElementById("sensor").innerHTML = "Sensor reading: " + json_data.text;
@@ -77,7 +107,17 @@
 			};
 			ws.send(JSON.stringify(msg));
 		}
-
+		function add_message(json_data){
+			var class_name,sender_name;
+			if(json_data.position=="left"){
+				class_name="leftside";
+				sender_name=json_data.sender+": ";
+			}else if(json_data.position=="right"){
+				class_name="rightside";
+				sender_name = "";
+			}
+			document.getElementById("chatbox").innerHTML += `<div class="outer"><div class="${class_name}"><div class="message"><b>${sender_name}</b>${json_data.text}</div></div></div>`;
+		}
 	</script>
 </body>
 </html>

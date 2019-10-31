@@ -29,11 +29,19 @@ wss.on('connection', (ws) => {
 			case "chat":
 				var chat_message = {
 					type:"chat",
-					text: ws.username + " : " + json_data.text,
+					sender: ws.username,
+					text: json_data.text,
+					position:"left",
 				};
 				wss.clients.forEach(function(client){
 					if(client.type=="client_connection"){
+						if(client.username == ws.username){
+							chat_message.position="right";
+						}else{
+							chat_message.position="left";
+						}
 						client.send(JSON.stringify(chat_message));
+
 					}
 				});
 				break;
